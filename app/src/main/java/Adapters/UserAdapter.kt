@@ -3,14 +3,16 @@ package Adapters
 import Entity.User
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.ilhomjon.asynctask.databinding.ItemRvBinding
 
-class UserAdapter(val list: List<User>):RecyclerView.Adapter<UserAdapter.Vh>() {
+class UserAdapter:ListAdapter<User, UserAdapter.Vh>(MyDiffUtil()) {
 
     inner class Vh(var itemRv:ItemRvBinding):RecyclerView.ViewHolder(itemRv.root){
 
-        fun onBind(user: User, position: Int){
+        fun onBind(user: User){
             itemRv.tv1.text = user.userName
             itemRv.tv2.text = user.password
         }
@@ -21,8 +23,18 @@ class UserAdapter(val list: List<User>):RecyclerView.Adapter<UserAdapter.Vh>() {
     }
 
     override fun onBindViewHolder(holder: Vh, position: Int) {
-        holder.onBind(list[position], position)
+        holder.onBind(getItem(position))
     }
 
-    override fun getItemCount(): Int = list.size
+    class MyDiffUtil:DiffUtil.ItemCallback<User>(){
+        override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
+            return oldItem.equals(newItem)
+        }
+
+    }
+
 }
